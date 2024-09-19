@@ -62,25 +62,6 @@ int main() {
     Eth_config_parms ethConfig = parseConfigFile(filename);
     Eth_config_values eth_values=eth_value_calculation(ethConfig);
 
-   /* cout << "no of bits per burst " << no_bits_per_burst << endl;
-    cout << "time of packets per burst " << time_pkts_per_burst << endl;
-    cout << "time of IFGs per burst " << eth_values.Eth_time_IFGs_per_burst << endl;
-    cout << "total number of bursts: " << eth_values.Eth_total_no_bursts << endl;
-    cout << "redundant bytes after transmission: " << eth_values.Eth_redundant_no_IFGs_after_transmission<< endl;
-
-    // Output the struct values
-    cout << "Parsed Ethernet Configuration Parameters:" << endl;
-    cout << "Data Rate (Gbps): " << ethConfig.Eth_Data_Rate_Gbps << endl;
-    cout << "Capture Size (ms): " << ethConfig.Eth_Capture_size_ms << endl;
-    cout << "Min IFGs per Packet: " << ethConfig.Eth_min_no_IFGs_per_packet << endl;
-    cout << "Destination Address: " << ethConfig.Eth_Dest_Address << endl;
-    cout << "Source Address: " << ethConfig.Eth_Src_Address << endl;
-    cout << "Max Packet Size: " << ethConfig.Eth_max_pkt_size << endl;
-    cout << "Burst Size: " << ethConfig.Eth_Burst_size << endl;
-    cout << "Burst Periodicity (us): " << ethConfig.Eth_Burst_periodicity_us << endl;
-
-    Eth_Burst_packet_size_calc(ethConfig,eth_values);
-*/
     vector<uint8_t> packet_unit=packet_formation(ethConfig,eth_values);
     uint32_t crc = calculateCRC32(packet_unit);
 
@@ -90,8 +71,6 @@ int main() {
     packet_unit_with_crc.reserve(packet_unit.size() + crc_vec.size()); // Reserve space
     packet_unit_with_crc.insert(packet_unit_with_crc.end(), packet_unit.begin(), packet_unit.end());
     packet_unit_with_crc.insert(packet_unit_with_crc.end(), crc_vec.begin(), crc_vec.end());
-
-    cout << "CRC-32 of the input vector is: 0x" << hex << crc << endl;
     
     return 0;
 }
