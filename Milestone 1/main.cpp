@@ -18,7 +18,7 @@ using namespace std;
 
 #define Preample_SFD_value 0xFB555555555555D5
 #define Eth_type_value 0xAEFE
-#define IFG_value 0x07
+#define IFG_value 7
 
 
 typedef struct {
@@ -71,6 +71,8 @@ int main() {
     packet_unit_with_crc.reserve(packet_unit.size() + crc_vec.size()); // Reserve space
     packet_unit_with_crc.insert(packet_unit_with_crc.end(), packet_unit.begin(), packet_unit.end());
     packet_unit_with_crc.insert(packet_unit_with_crc.end(), crc_vec.begin(), crc_vec.end());
+
+    write_txt_file(packet_unit_with_crc,ethConfig,eth_values);
     
     return 0;
 }
@@ -192,8 +194,6 @@ Eth_config_values eth_value_calculation(Eth_config_parms eth_parms){
       unsigned int pkts_per_burst=eth_values.Eth_total_packet_size_with_IFGs*eth_parms.Eth_Burst_size;
       eth_values.Eth_redundant_no_IFGs_per_burst=floor(eth_parms.Eth_Burst_periodicity_us*(0.000001)*eth_parms.Eth_Data_Rate_Gbps*(1000000000.0)/8)-pkts_per_burst;
       
-      cout<<eth_values.Eth_payload_no_bytes<<endl;
-      
 
     return eth_values;
 
@@ -266,5 +266,85 @@ vector<uint8_t> packet_formation(Eth_config_parms eth_parms, Eth_config_values e
     }   
     
     return packet;
+
+}
+
+void write_txt_file(vector<uint8_t> packet_unit,Eth_config_parms eth_parms,Eth_config_values eth_values){
+
+    ofstream outFile("output.txt");
+    if (!outFile) {
+        cerr << "Error opening file!" << endl;
+        return;
+    }
+
+    int m=0;
+    for (unsigned int i = 0; i < eth_values.Eth_total_no_bursts; i++) {
+        // Add "0x" at the start of every new line
+        for (unsigned int j = 0; j < eth_parms.Eth_Burst_size; j++)
+        {
+        
+        for (unsigned int k = 0; k < eth_parms.Eth_max_pkt_size; k++)
+        {
+
+        if (m % 4 == 0) {
+            outFile << "0x";
+            m=0;
+        }
+
+        // Write each byte in two-digit hex format
+        outFile << setw(2) << setfill('0') << hex << uppercase << static_cast<int>(packet_unit[k]);
+        m++;
+
+        // Add newline after every 8 bytes
+        if ((m + 1) % 4 == 0) {
+            outFile << endl;
+            m++;
+        }
+       }
+
+        for (unsigned int k = 0; k < eth_values.Eth_no_IFGs_per_packet_after_alignment; k++)
+        {
+
+        if (m % 4 == 0) {
+            outFile << "0x";
+            m=0;
+        }
+
+        // Write each byte in two-digit hex format
+        outFile << setw(2) << setfill('0') << hex << uppercase << static_cast<int>(IFG_value);
+        m++;
+
+        // Add newline after every 8 bytes
+        if ((m + 1) % 4 == 0) {
+            outFile << endl;
+            m++;
+        }
+       }
+
+
+    }
+    }
+
+    for (unsigned int k = 0; k < eth_values.Eth_redundant_no_IFGs_after_transmission; k++)
+        {
+
+        if (m % 4 == 0) {
+            outFile << "0x";
+            m=0;
+        }
+
+        // Write each byte in two-digit hex format
+        outFile << setw(2) << setfill('0') << hex << uppercase << static_cast<int>(IFG_value);
+        m++;
+
+        // Add newline after every 8 bytes
+        if ((m + 1) % 4 == 0) {
+            outFile << endl;
+            m++;
+        }
+       }
+
+    outFile.close();
+
 
 }
