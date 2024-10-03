@@ -64,13 +64,19 @@ int main() {
 
     vector<uint8_t> packet_unit=packet_formation(ethConfig,eth_values);
     uint32_t crc = calculateCRC32(packet_unit);
-
+   
     vector<uint8_t> crc_vec={(uint8_t) (crc>>3*8),(uint8_t) (crc>>2*8),(uint8_t) (crc>>1*8),(uint8_t) crc};
 
     vector<uint8_t> packet_unit_with_crc;
     packet_unit_with_crc.reserve(packet_unit.size() + crc_vec.size()); // Reserve space
     packet_unit_with_crc.insert(packet_unit_with_crc.end(), packet_unit.begin(), packet_unit.end());
     packet_unit_with_crc.insert(packet_unit_with_crc.end(), crc_vec.begin(), crc_vec.end());
+
+    vector<uint8_t> pattern = {
+        0xFB, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0xD5, 
+        0x01, 0x01, 0x01, 0x01, 0x01, 0x01,0x33, 0x33, 0x33, 
+        0x33, 0x33, 0x33, 0xAE, 0xFE
+    };
 
     write_txt_file(packet_unit_with_crc,ethConfig,eth_values);
     
@@ -286,9 +292,8 @@ void write_txt_file(vector<uint8_t> packet_unit,Eth_config_parms eth_parms,Eth_c
         for (unsigned int k = 0; k < eth_parms.Eth_max_pkt_size; k++)
         {
 
-        if (m % 4 == 0) {
+        if (m == 0) {
             outFile << "0x";
-            m=0;
         }
 
         // Write each byte in two-digit hex format
@@ -296,18 +301,18 @@ void write_txt_file(vector<uint8_t> packet_unit,Eth_config_parms eth_parms,Eth_c
         m++;
 
         // Add newline after every 8 bytes
-        if ((m + 1) % 4 == 0) {
+        if (m  == 4) {
             outFile << endl;
-            m++;
+            m=0;
         }
+
        }
 
         for (unsigned int k = 0; k < eth_values.Eth_no_IFGs_per_packet_after_alignment; k++)
         {
 
-        if (m % 4 == 0) {
-            outFile << "0x";
-            m=0;
+        if (m == 0) {
+            outFile << "0x";     
         }
 
         // Write each byte in two-digit hex format
@@ -315,9 +320,9 @@ void write_txt_file(vector<uint8_t> packet_unit,Eth_config_parms eth_parms,Eth_c
         m++;
 
         // Add newline after every 8 bytes
-        if ((m + 1) % 4 == 0) {
+        if (m  == 4 ) {
             outFile << endl;
-            m++;
+            m=0;
         }
        }
 
@@ -328,9 +333,8 @@ void write_txt_file(vector<uint8_t> packet_unit,Eth_config_parms eth_parms,Eth_c
     for (unsigned int k = 0; k < eth_values.Eth_redundant_no_IFGs_after_transmission; k++)
         {
 
-        if (m % 4 == 0) {
-            outFile << "0x";
-            m=0;
+        if (m == 0) {
+            outFile << "0x";     
         }
 
         // Write each byte in two-digit hex format
@@ -338,9 +342,9 @@ void write_txt_file(vector<uint8_t> packet_unit,Eth_config_parms eth_parms,Eth_c
         m++;
 
         // Add newline after every 8 bytes
-        if ((m + 1) % 4 == 0) {
+        if (m  == 4 ) {
             outFile << endl;
-            m++;
+            m=0;
         }
        }
 
