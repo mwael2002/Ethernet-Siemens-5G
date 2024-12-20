@@ -5,7 +5,7 @@
 #include <vector>
 #include <cstdint>
 #include <cmath>
-#include "Eth.h"
+#include "ethernet.h"
 #include "ECPRI.h"
 #include "ORAN.h"
 
