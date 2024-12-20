@@ -1,4 +1,4 @@
-#include "Eth.h"
+#include "ethernet.h"
 
 // constructor implementation
 Eth::Eth(float line_rate, float capture_size, int min_num_of_ifg_per_packet,
