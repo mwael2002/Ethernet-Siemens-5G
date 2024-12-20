@@ -6,8 +6,8 @@
 #include <cstdint>
 #include <cmath>
 #include "ethernet.h"
-#include "ECPRI.h"
-#include "ORAN.h"
+#include "ecpri.h"
+#include "oran.h"
 
 using namespace std;
 
