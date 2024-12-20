@@ -1,4 +1,4 @@
-#include "ORAN.h"
+#include "oran.h"
 
 // constructor implementation
 ORAN::ORAN(int scs, int max_nrb, int nrb_per_packet, int payload_count, string payload_type, string payload_file, vector<uint8_t> payload)
