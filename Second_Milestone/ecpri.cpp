@@ -1,4 +1,4 @@
-#include "ECPRI.h"
+#include "ecpri.h"
 
 // constructor implementation
 ECPRI::ECPRI(uint8_t message_type, uint16_t payload_size, uint16_t pc_rtc, uint16_t seq_id, vector<uint8_t> payload)
